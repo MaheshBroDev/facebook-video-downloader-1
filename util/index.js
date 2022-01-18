@@ -84,7 +84,11 @@ export async function mergeVideo(video, audio) {
 };
 
 export async function downloadMedia(link) {
-      const res = await fetch(link, { mode: 'no-cors' });
-      return URL.createObjectURL(new Blob([res.buffer],
-            { type: 'video/mp4' }))
+      try {
+            const res = await fetch(link, { mode: 'no-cors' });
+            return URL.createObjectURL(new Blob([res.buffer],
+                  { type: 'video/mp4' }))
+      } catch (e) {
+            console.log('error in fetching')
+      }
 }
