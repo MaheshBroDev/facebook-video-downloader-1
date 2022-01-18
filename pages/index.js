@@ -187,7 +187,7 @@ export default class Home extends React.Component {
                         </Modal>
                         <style jsx>{`
                               .container {
-                                    min-width:100vw;
+                                    width:100vw;
                                     min-height: 100vh;
                                     padding: 0 0.5rem;
                                     display: flex;
@@ -273,6 +273,13 @@ export default class Home extends React.Component {
                               }
                               h2{
                                     color:white;
+                              }
+                              @media (max-width:480px){
+                                    .check-button,
+                                    .input-box,.status,
+                                    .video-player{
+                                          min-width:350px;
+                                    }
                               }
                         `}</style>
                   </>
