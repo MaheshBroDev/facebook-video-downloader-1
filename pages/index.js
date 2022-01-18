@@ -24,7 +24,7 @@ export default class Home extends React.Component {
                   '720p': false,
             },
             selectedMedia: "",
-            loading:false
+            loading: false
       }
 
       componentDidMount() {
@@ -67,10 +67,10 @@ export default class Home extends React.Component {
       extractLinkHandler = async () => {
             const { resourceStr, selectedMedia } = this.state;
             if (resourceStr && selectedMedia) {
-                  this.setState(prevState=>{
+                  this.setState(prevState => {
                         return {
                               ...prevState,
-                              loading:true
+                              loading: true
                         }
                   })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
@@ -81,7 +81,7 @@ export default class Home extends React.Component {
                         return {
                               ...prevState,
                               videoSrc,
-                              loading:false
+                              loading: false
                         }
                   })
             }
@@ -139,7 +139,7 @@ export default class Home extends React.Component {
                               </div>
                               <button onClick={this.checkHDhandler}>Check SD/HD</button>
                               <button onClick={this.extractLinkHandler} disabled={this.state.loading}>
-                                    {this.state.loading?"downloading please wait...":"Download"}</button>
+                                    {this.state.loading ? "downloading please wait..." : "Download"}</button>
                         </div>
                         <style jsx>{`
                               .container {
@@ -153,6 +153,13 @@ export default class Home extends React.Component {
                               }
                               .hide{
                                     display:none;
+                              }
+                        `}</style>
+
+                        <style jsx global>{`
+                              *{
+                                    margin:0;
+                                    box-sizing:border-box;
                               }
                         `}</style>
                   </>
