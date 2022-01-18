@@ -3,7 +3,7 @@ module.exports = {
             return [
                   {
                         // matching all API routes
-                        source: "/:path*",
+                        source: "/downloads/:path*",
                         headers: [
                               {
                                     "key": "Cross-Origin-Opener-Policy",

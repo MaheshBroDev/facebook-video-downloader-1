@@ -27,6 +27,8 @@ export default class Download extends React.Component {
       }
 
       componentDidMount() {
+            if (crossOriginIsolated)
+                  console.log('SharedArrayBuffer enabled.')
             window.onmessage = async (e) => {
                   if (typeof e.data === 'string') {
                         const obj = JSON.parse(e.data);
@@ -85,8 +87,6 @@ export default class Download extends React.Component {
 
       extractLinkHandler = () => {
             const { resourceStr, selectedMedia } = this.state;
-            if (crossOriginIsolated)
-                  console.log('SharedArrayBuffer enabled.')
             if (resourceStr && selectedMedia) {
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
                   const audio_link = extractAudioLink(resourceStr);
