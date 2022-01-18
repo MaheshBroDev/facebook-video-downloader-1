@@ -17,11 +17,10 @@ app
                   const parsedUrl = parse(req.url, true)
                   const { pathname } = parsedUrl
 
-                  if ('/downloads/download' === pathname) {
+                  if ('/' === pathname) {
                         console.log(pathname);
                         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
                         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
-                        res.setHeader('X-Frame-Options','SAMEORIGIN')
                   }
                   handle(req, res)
             })

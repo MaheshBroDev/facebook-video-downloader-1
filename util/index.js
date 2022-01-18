@@ -39,12 +39,22 @@ export function extractVideoLink(str, media) {
       const regex = new RegExp('(?<=FBQualityLabel="' + media + '">u003CBaseURL>)(.*?)(?=u003C\/BaseURL)', "s");
       const result = (str + "").match(regex);
       console.log('result ', result);
-      return result ? result[0] : "";
+      const extractedResult=result ? result[0] : "";
+      console.log('origin',extractedResult);
+      console.log('-sin6-3',extractedResult.includes('-sin6-3'))
+      const v2=extractedResult.replace("-sin6-3","")
+      console.log('modified',v2);
+      return v2;
 }
 
 export function extractAudioLink(str) {
       const regex = /(?<="audio":\[{"url":")(.*?)(?="\,"start":0)/s;
-      return (str + "").match(regex)[0];
+      const extractedResult=(str + "").match(regex)[0];
+      console.log('origin',extractedResult)
+      const v2=extractedResult.replace("-sin6-4","")
+      console.log('-sin6-3',extractedResult.includes('-sin6-4'))
+      console.log('modified',v2);
+      return v2;
 }
 
 export function consume(reader) {
@@ -82,13 +92,3 @@ export async function mergeVideo(video, audio) {
       let data = await ffmpeg.FS('readFile', 'output.mp4');
       return data;
 };
-
-export async function downloadMedia(link) {
-      try {
-            const res = await fetch(link, { mode: 'no-cors' });
-            return URL.createObjectURL(new Blob([res.buffer],
-                  { type: 'video/mp4' }))
-      } catch (e) {
-            console.log('error in fetching')
-      }
-}

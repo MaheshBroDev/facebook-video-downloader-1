@@ -1,65 +1,152 @@
-import Head from 'next/head'
-import { useEffect } from 'react';
-import { downloadMedia } from '../util';
+import React from "react";
+import {
+      checkMedia,
+      checkResolutions,
+      cleanLink,
+      extractVideoLink,
+      extractAudioLink,
+      mergeVideo
+} from '../util';
 
-export default function Home() {
-      useEffect(() => {
-            window.onmessage = async (e) => {
-                  if (typeof e.data === 'string') {
-                        const obj = JSON.parse(e.data);
-                        if (obj.from === 'downloader-fb-hd') {
-                              const msg = obj.data;
-                              console.log('received in home',msg);
-                              const video = await downloadMedia(msg.video);
-                              const audio = await downloadMedia(msg.audio);
-                              const data = {
-                                    video,
-                                    audio
-                              }
-                              if (video && audio)
-                                    e.source.postMessage(JSON.stringify({
-                                          from: 'downloader-fb-hd',
-                                          data
-                                    }), '*');
-                        }
+export default class Home extends React.Component {
+      state = {
+            videoSrc: "",
+            resourceStr: "",
+            media: {
+                  sd: false,
+                  hd: false,
+            },
+            resolutions: {
+                  '144p': false,
+                  '240p': false,
+                  '360p': false,
+                  '480p': false,
+                  '720p': false,
+            },
+            selectedMedia: "",
+      }
+
+      componentDidMount() {
+            if (crossOriginIsolated)
+                  console.log('SharedArrayBuffer enabled.')
+      }
+
+      onChangeInput = (e) => {
+            this.setState(prevState => {
+                  let resourceStr = cleanLink(e.target.value)
+                        .clean("\\", "amp;", " ").value;
+                  return {
+                        ...prevState,
+                        resourceStr
                   }
-            };
-      }, [])
-      return (
-            <div className="container">
-                  <Head>
-                        <title>Create Next App</title>
-                        <link rel="icon" href="/favicon.ico" />
-                  </Head>
-                  <div className="container">
-                        <h1>Main app</h1>
-                        <iframe width="500px" height="600px" src="/downloads/download"></iframe>
-                  </div>
-                  <style jsx>{`
-        .container {
-          min-height: 100vh;
-          padding: 0 0.5rem;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-        }
-      `}</style>
+            })
+      }
 
-                  <style jsx global>{`
-        html,
-        body {
-          padding: 0;
-          margin: 0;
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto,
-            Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
-            sans-serif;
-        }
+      checkHDhandler = () => {
+            const media = checkMedia(this.state.resourceStr);
+            console.log(media);
+            this.setState(prevState => {
+                  return {
+                        ...prevState,
+                        media
+                  }
+            })
+            if (media.hd || media.sd) {
+                  const resolutions = checkResolutions(this.state.resourceStr);
+                  console.log('resolutions', resolutions);
+                  this.setState(prevState => {
+                        return {
+                              ...prevState,
+                              resolutions
+                        }
+                  })
+            }
+      }
 
-        * {
-          box-sizing: border-box;
-        }
-      `}</style>
-            </div>
-      )
+      extractLinkHandler = async () => {
+            const { resourceStr, selectedMedia } = this.state;
+            if (resourceStr && selectedMedia) {
+                  const video_link = extractVideoLink(resourceStr, selectedMedia);
+                  const audio_link = extractAudioLink(resourceStr);
+                  const data = await mergeVideo(video_link, audio_link);
+                  const videoSrc = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                  this.setState(prevState => {
+                        return {
+                              ...prevState,
+                              videoSrc
+                        }
+                  })
+            }
+      }
+
+      selectMedia = (e) => {
+            this.setState(prevState => {
+                  return {
+                        selectedMedia: e.target.value
+                  }
+            })
+      }
+
+      render() {
+            return (
+                  <>
+                        <div className="container">
+                              <h1>Hello</h1>
+                              <input onChange={this.onChangeInput} />
+                              {this.state.videoSrc && <video src={this.state.videoSrc} controls></video>}
+                              <div id="sd" className={this.state.media.sd ? "" : "hide"}>
+                                    <p>SD:</p>
+
+                                    <div id="p144" className={this.state.resolutions['144p'] ? "" : "hide"}>
+                                          <input type="radio" name="media"
+                                                onClick={this.selectMedia} value="144p" />
+                                          <label>144p</label>
+                                    </div>
+
+                                    <div id="p240" className={this.state.resolutions['240p'] ? "" : "hide"}>
+                                          <input type="radio" name="media"
+                                                onClick={this.selectMedia} value="240p" />
+                                          <label>240p</label>
+                                    </div>
+
+                                    <div id="p360" className={this.state.resolutions['360p'] ? "" : "hide"} >
+                                          <input type="radio" name="media"
+                                                onClick={this.selectMedia} value="360p" />
+                                          <label>360p</label>
+                                    </div>
+
+                                    <div id="p480" className={this.state.resolutions['480p'] ? "" : "hide"} >
+                                          <input type="radio" name="media"
+                                                onClick={this.selectMedia} value="480p" />
+                                          <label>480p</label>
+                                    </div>
+                              </div>
+                              <div id="hd" className={this.state.media.hd ? "" : "hide"}>
+                                    <p>HD:</p>
+                                    <div id="p720" className={this.state.resolutions['720p'] ? "" : "hide"} >
+                                          <input type="radio" name="media"
+                                                onClick={this.selectMedia} value="720p" />
+                                          <label>720p</label>
+                                    </div>
+                              </div>
+                              <button onClick={this.checkHDhandler}>Check SD/HD</button>
+                              <button onClick={this.extractLinkHandler}>Download</button>
+                        </div>
+                        <style jsx>{`
+                              .container {
+                                    min-width:100vw;
+                                    min-height: 100vh;
+                                    padding: 0 0.5rem;
+                                    display: flex;
+                                    flex-direction: column;
+                                    justify-content: center;
+                                    align-items: center;
+                              }
+                              .hide{
+                                    display:none;
+                              }
+                        `}</style>
+                  </>
+            );
+      }
 }
