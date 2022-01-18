@@ -138,7 +138,7 @@ export default class Home extends React.Component {
                                     </div>
                               </div>
                               <button onClick={this.checkHDhandler}>Check SD/HD</button>
-                              <button onClick={this.extractLinkHandler} disabled={this.state.loading}>
+                              <button onClick={this.extractLinkHandler} disabled={this.state.loading || !this.state.selectedMedia}>
                                     {this.state.loading ? "downloading please wait..." : "Download"}</button>
                         </div>
                         <style jsx>{`
