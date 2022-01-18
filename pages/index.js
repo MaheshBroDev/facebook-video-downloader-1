@@ -48,7 +48,6 @@ export default class Home extends React.Component {
 
       checkHDhandler = () => {
             const media = checkMedia(this.state.resourceStr);
-            console.log(media);
             this.setState(prevState => {
                   return {
                         ...prevState,
@@ -57,7 +56,7 @@ export default class Home extends React.Component {
             })
             if (media.hd || media.sd) {
                   const resolutions = checkResolutions(this.state.resourceStr);
-                  console.log('resolutions', resolutions);
+                  // console.log('resolutions', resolutions);
                   this.setState(prevState => {
                         return {
                               ...prevState,
