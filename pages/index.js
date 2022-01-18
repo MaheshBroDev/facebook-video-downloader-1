@@ -24,6 +24,7 @@ export default class Home extends React.Component {
                   '720p': false,
             },
             selectedMedia: "",
+            loading:false
       }
 
       componentDidMount() {
@@ -66,6 +67,12 @@ export default class Home extends React.Component {
       extractLinkHandler = async () => {
             const { resourceStr, selectedMedia } = this.state;
             if (resourceStr && selectedMedia) {
+                  this.setState(prevState=>{
+                        return {
+                              ...prevState,
+                              loading:true
+                        }
+                  })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
                   const audio_link = extractAudioLink(resourceStr);
                   const data = await mergeVideo(video_link, audio_link);
@@ -73,7 +80,8 @@ export default class Home extends React.Component {
                   this.setState(prevState => {
                         return {
                               ...prevState,
-                              videoSrc
+                              videoSrc,
+                              loading:false
                         }
                   })
             }
@@ -130,7 +138,8 @@ export default class Home extends React.Component {
                                     </div>
                               </div>
                               <button onClick={this.checkHDhandler}>Check SD/HD</button>
-                              <button onClick={this.extractLinkHandler}>Download</button>
+                              <button onClick={this.extractLinkHandler} disabled={this.state.loading}>
+                                    {this.state.loading?"downloading please wait...":"Download"}</button>
                         </div>
                         <style jsx>{`
                               .container {
