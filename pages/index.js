@@ -13,7 +13,7 @@ export default function Home() {
       </Head>
       <div className="container">
             <h1>Main app</h1>
-            <iframe width="200px" height="200px" src="/downloads/download"></iframe>
+            <iframe width="500px" height="600px" src="/downloads/download"></iframe>
       </div>
       <style jsx>{`
         .container {
