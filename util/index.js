@@ -42,9 +42,9 @@ export function extractVideoLink(str, media) {
       const extractedResult=result ? result[0] : "";
       // console.log('origin',extractedResult);
       // console.log('-sin6-3',extractedResult.includes('-sin6-3'))
-      const v2=extractedResult.replace("-sin6-3","")
+      const v2=extractedResult.replace("-sin6-3","");
       // console.log('modified',v2);
-      return v2;
+      return v2.replace("-sin6-4","");
 }
 
 export function extractAudioLink(str) {
@@ -54,7 +54,7 @@ export function extractAudioLink(str) {
       const v2=extractedResult.replace("-sin6-4","")
       // console.log('-sin6-3',extractedResult.includes('-sin6-4'))
       // console.log('modified',v2);
-      return v2;
+      return v2.replace("-sin6-3","");
 }
 
 export function consume(reader) {
