@@ -16,9 +16,9 @@ Private videos in your facebook can be downloaded in mutiple resolutions (144p, 
 
 ## How to use
 
-view-source:https://www.facebook.com/some.one.12/videos/388327277238288/  
-select all and copy codes
-paste in input box and start using
+- view-source:https://www.facebook.com/some.one.12/videos/388327277238288/  
+- select all and copy codes  
+- paste in input box and start using
 
 ## Authors
 
