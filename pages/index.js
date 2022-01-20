@@ -2,7 +2,7 @@ import React from "react";
 import {
       checkMedia,
       checkResolutions,
-      cleanLink,
+      Cleaner,
       extractVideoLink,
       extractAudioLink,
       mergeVideo
@@ -37,8 +37,8 @@ export default class Home extends React.Component {
 
       onChangeInput = (e) => {
             this.setState(prevState => {
-                  let resourceStr = cleanLink(e.target.value)
-                        .clean("\\", "amp;", " ").value;
+                  const cleaner=new Cleaner(e.target.value);
+                  let resourceStr = cleaner.clean("\\", "amp;", " ").value;
                   return {
                         ...prevState,
                         resourceStr
@@ -75,7 +75,7 @@ export default class Home extends React.Component {
                               ...prevState,
                               loading: true,
                               isModalVisible: false,
-                              status: "Downloading .. please wait util finish"
+                              status: "Downloading .. please wait util finish [DO NOT REFRESH!]"
                         }
                   })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
@@ -262,6 +262,7 @@ export default class Home extends React.Component {
                               .disabled{
                                     filter:brightness(1) !important;
                                     background:#8d99ae !important;
+                                    cursor: not-allowed;
                               }
                         `}</style>
 

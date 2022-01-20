@@ -1,20 +1,12 @@
 import { fetchFile } from "@ffmpeg/ffmpeg";
 import { ffmpeg } from "./ffmpeg";
 
-export function cleanLink(raw_link) {
-      let value = raw_link ?? "";
-      const clean = function (...args) {
+export function Cleaner(raw_text) {
+      this.value = raw_text ?? "";
+      this.clean = function (...args) {
             args.length !== 0 && [...args].map(trash =>
-                  value = value.replaceAll(trash, ""))
-            window.navigator.clipboard.writeText(value);
-            return {
-                  value,
-                  clean: this
-            }
-      }
-      return {
-            value,
-            clean
+                  this.value = this.value.replaceAll(trash, ""))
+            return this;
       }
 };
 
