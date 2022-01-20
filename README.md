@@ -2,7 +2,7 @@
 # HD Video Downloader For Facebook  
 
 
-[![MIT License](https://img.shields.io/apm/l/atomic-design-ui.svg?)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) 
+[![GPL 3.0 License](https://shields.io/category/license)](https://github.com/tterb/atomic-design-ui/blob/master/LICENSEs) 
 
 Private videos in your facebook can be downloaded in mutiple resolutions (144p, 240p, 360p, 480p, 720p).
 
