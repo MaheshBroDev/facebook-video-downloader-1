@@ -8,7 +8,7 @@ Private videos in your facebook can be downloaded in mutiple resolutions (144p, 
 
 ## Features
 
-- Extract extract the links for the video and the audio
+- Extract the links for the video and the audio
 - Download the video and the audio  
 - Combine the video and the audio  
 - Show the video inside the player where it can be saved
