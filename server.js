@@ -18,7 +18,6 @@ app
                   const { pathname } = parsedUrl
 
                   if ('/' === pathname) {
-                        console.log(pathname);
                         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
                         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
                   }
