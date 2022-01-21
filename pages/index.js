@@ -5,7 +5,9 @@ import {
       Cleaner,
       extractVideoLink,
       extractAudioLink,
-      mergeVideo
+      mergeVideo,
+      increaseCount,
+      getCount
 } from '../util';
 import Modal from '../components/Modal';
 
@@ -27,17 +29,23 @@ export default class Home extends React.Component {
             selectedMedia: "",
             loading: false,
             isModalVisible: false,
-            status: ":D"
+            status: ":D",
+            count: "..."
       }
 
-      componentDidMount() {
+      async componentDidMount() {
             if (crossOriginIsolated)
                   console.log('SharedArrayBuffer enabled.')
+
+            const count = await getCount();
+            this.setState({
+                  count
+            })
       }
 
       onChangeInput = (e) => {
             this.setState(prevState => {
-                  const cleaner=new Cleaner(e.target.value);
+                  const cleaner = new Cleaner(e.target.value);
                   let resourceStr = cleaner.clean("\\", "amp;", " ").value;
                   return {
                         ...prevState,
@@ -75,19 +83,21 @@ export default class Home extends React.Component {
                               ...prevState,
                               loading: true,
                               isModalVisible: false,
-                              status: "Downloading .. please wait util finish [DO NOT REFRESH!]"
+                              status: ""
                         }
                   })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
                   const audio_link = extractAudioLink(resourceStr);
                   const data = await mergeVideo(video_link, audio_link);
                   const videoSrc = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
+                  const count = await increaseCount();
                   this.setState(prevState => {
                         return {
                               ...prevState,
                               videoSrc,
                               loading: false,
-                              status: "Thanks for using my app. :D"
+                              status: "Thanks for using my app. :D",
+                              count
                         }
                   })
             }
@@ -110,6 +120,16 @@ export default class Home extends React.Component {
       }
 
       render() {
+            const spinner = (
+                  <>
+                        <div className="lds-ellipsis">
+                              <div></div>
+                              <div></div>
+                              <div></div>
+                              <div></div>
+                        </div>
+                  </>
+            );
             return (
                   <>
                         <div className="container">
@@ -121,7 +141,11 @@ export default class Home extends React.Component {
                               <button onClick={this.checkHDhandler}
                                     className="check-button">
                                     Check SD/HD</button>
-                              <p className="status">{this.state.status}</p>
+                              <div className="color-box">
+                                    <div>download counts</div>
+                                    <div>{this.state.count}</div>
+                              </div>
+                              <div className="status">{this.state.status}{this.state.loading && spinner}</div>
                               {this.state.videoSrc && <video className="video-player"
                                     src={this.state.videoSrc} controls></video>}
                         </div>
@@ -193,7 +217,7 @@ export default class Home extends React.Component {
                                     flex-direction: column;
                                     justify-content: center;
                                     align-items: center;
-                                    background:#619b8a;
+                                    background:#ffffff;
                                     color:white;
                               }
                               .options{
@@ -218,6 +242,7 @@ export default class Home extends React.Component {
                                     min-height:80px;
                                     color:black;
                                     padding:8px;
+                                    background:#e8eded;
                               }
                               .check-button{
                                     margin:10px 0;
@@ -226,16 +251,16 @@ export default class Home extends React.Component {
                                     border:none;
                                     outline:none;
                                     border-radius:5px;
-                                    background:#233d4d;
+                                    background:#0a2342;
                                     color:white;
                                     text-align:center;
                               }
                               .check-button:hover{
-                                    filter:brightness(1.2);
+                                    filter:brightness(1.5);
                                     transition:filter 300ms;
                               }
                               .status{
-                                    color:white;
+                                    color:#0b0a0a;
                                     min-width:380px;
                                     text-align:left;
                               }
@@ -256,13 +281,35 @@ export default class Home extends React.Component {
                                     border:none;
                               }
                               .button:hover{
-                                    filter:brightness(1.1);
+                                    filter:brightness(1.3);
                                     transition:filter 300ms;
                               }
                               .disabled{
                                     filter:brightness(1) !important;
                                     background:#8d99ae !important;
                                     cursor: not-allowed;
+                              }
+                              .color-box{
+                                    min-width:380px;
+                                    border-radius:3px;
+                                    display:flex;
+                                    border: 2px solid #00bbe0;
+                                    margin-bottom:5px;
+                              }
+                              .color-box>div{
+                                    flex:1;
+                                    display:flex;
+                                    justify-content:center;
+                                    padding:0.2rem 1.1rem;
+                              }
+                              .color-box>div:first-child{
+                                    background:#00bbe0;
+                                    color:white;
+                              }
+                              
+                              .color-box>div:last-child{
+                                    background:white;
+                                    color: rgba(0,0,0, 0.5);
                               }
                         `}</style>
 
@@ -271,8 +318,9 @@ export default class Home extends React.Component {
                                     margin:0;
                                     box-sizing:border-box;
                               }
+                              h1,
                               h2{
-                                    color:white;
+                                    color:#0b0a0a;
                               }
                               @media (max-width:480px){
                                     .check-button,
@@ -281,6 +329,59 @@ export default class Home extends React.Component {
                                           min-width:350px;
                                     }
                               }
+                              .lds-ellipsis {
+                                    display: inline-block;
+                                    position: relative;
+                                    background:yellow;
+                                  }
+                                  .lds-ellipsis div {
+                                    position: absolute;
+                                    width: 8px;
+                                    height: 8px;
+                                    border-radius: 50%;
+                                    background: #0a2342;
+                                    animation-timing-function: cubic-bezier(0, 1, 1, 0);
+                                  }
+                                  .lds-ellipsis div:nth-child(1) {
+                                    left: 8px;
+                                    animation: lds-ellipsis1 0.6s infinite;
+                                  }
+                                  .lds-ellipsis div:nth-child(2) {
+                                    left: 8px;
+                                    animation: lds-ellipsis2 0.6s infinite;
+                                  }
+                                  .lds-ellipsis div:nth-child(3) {
+                                    left: 32px;
+                                    animation: lds-ellipsis2 0.6s infinite;
+                                  }
+                                  .lds-ellipsis div:nth-child(4) {
+                                    left: 56px;
+                                    animation: lds-ellipsis3 0.6s infinite;
+                                  }
+                                  @keyframes lds-ellipsis1 {
+                                    0% {
+                                      transform: scale(0);
+                                    }
+                                    100% {
+                                      transform: scale(1);
+                                    }
+                                  }
+                                  @keyframes lds-ellipsis3 {
+                                    0% {
+                                      transform: scale(1);
+                                    }
+                                    100% {
+                                      transform: scale(0);
+                                    }
+                                  }
+                                  @keyframes lds-ellipsis2 {
+                                    0% {
+                                      transform: translate(0, 0);
+                                    }
+                                    100% {
+                                      transform: translate(24px, 0);
+                                    }
+                                  }                                  
                         `}</style>
                   </>
             );

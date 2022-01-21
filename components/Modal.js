@@ -36,7 +36,7 @@ export default function Modal({ visible,children }) {
                                    padding:50px;
                                    background:white;
                                    color:black;
-                                   border-radius:20px;
+                                   border-radius:5px;
                                    display:grid;
                                    grid-template:repeat(2,auto) / 1fr;
                               }

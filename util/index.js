@@ -27,24 +27,24 @@ export function checkResolutions(str) {
       }
 }
 
-function solveCors(link){
-      const regex=/(?<=video)(.*?)(?=.xx)/s;
-      return link.replace(regex,"");
+function solveCors(link) {
+      const regex = /(?<=video)(.*?)(?=.xx)/s;
+      return link.replace(regex, "");
 }
 
-function extractLink(str,regex){
-      const extractedResult=(str+"").match(regex)[0]??"";
+function extractLink(str, regex) {
+      const extractedResult = (str + "").match(regex)[0] ?? "";
       return solveCors(extractedResult);
 }
 
 export function extractVideoLink(str, media) {
       const regex = new RegExp('(?<=FBQualityLabel="' + media + '">u003CBaseURL>)(.*?)(?=u003C\/BaseURL)', "s");
-      return extractLink(str,regex);
+      return extractLink(str, regex);
 }
 
 export function extractAudioLink(str) {
       const regex = /(?<="audio":\[{"url":")(.*?)(?="\,"start":0)/s;
-      return extractLink(str,regex);
+      return extractLink(str, regex);
 }
 
 export function consume(reader) {
@@ -82,3 +82,15 @@ export async function mergeVideo(video, audio) {
       let data = await ffmpeg.FS('readFile', 'output.mp4');
       return data;
 };
+
+export async function increaseCount() {
+      const res = await fetch(window.location.origin + '/api/downloaded');
+      const data = await res.json();
+      return data.count;
+}
+
+export async function getCount(){
+      const res = await fetch(window.location.origin + '/api/downloads');
+      const data = await res.json();
+      return data.count;
+}
