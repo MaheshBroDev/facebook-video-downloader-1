@@ -1,4 +1,4 @@
-import { fetchFile } from "@ffmpeg/ffmpeg";
+const fetchFile = require('./fetchFile');
 import { ffmpeg } from "./ffmpeg";
 
 export function Cleaner(raw_text) {
@@ -47,24 +47,6 @@ export function extractAudioLink(str) {
       return extractLink(str, regex);
 }
 
-export function consume(reader) {
-      var total = 0
-      return new Promise((resolve, reject) => {
-            function pump() {
-                  reader.read().then(({ done, value }) => {
-                        if (done) {
-                              resolve()
-                              return
-                        }
-                        total += value.byteLength
-                        log(`received ${value.byteLength} bytes (${total} bytes in total)`)
-                        pump()
-                  }).catch(reject)
-            }
-            pump()
-      })
-}
-
 
 export async function mergeVideo(video, audio) {
       if (!ffmpeg.isLoaded()) {
@@ -73,12 +55,21 @@ export async function mergeVideo(video, audio) {
                   console.log('parsing', (parseInt(ratio) * 100) + '%')
             });
       }
-      const videoFile = await fetchFile(video);
+      let videoSize=0;
+      const videoFile = await fetchFile(video,({value})=>{
+            videoSize+=value.byteLength;
+            // console.log('total',videoSize);
+      });
+      let audioSize=0;
       ffmpeg.FS('writeFile', 'video.mp4', videoFile);
-      const audioFile = await fetchFile(audio);
+      const audioFile = await fetchFile(audio,({value})=>{
+            audioSize+=value.byteLength;
+            // console.log('total',audioSize);
+      });
       ffmpeg.FS('writeFile', 'audio.mp4', audioFile);
 
       await ffmpeg.run('-i', 'video.mp4', '-i', 'audio.mp4', '-c', 'copy', 'output.mp4');
       let data = await ffmpeg.FS('readFile', 'output.mp4');
       return data;
 };
+
