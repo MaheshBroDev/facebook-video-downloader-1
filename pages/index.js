@@ -6,8 +6,6 @@ import {
       extractVideoLink,
       extractAudioLink,
       mergeVideo,
-      increaseCount,
-      getCount
 } from '../util';
 import Modal from '../components/Modal';
 
@@ -30,17 +28,11 @@ export default class Home extends React.Component {
             loading: false,
             isModalVisible: false,
             status: ":D",
-            count: "..."
       }
 
       async componentDidMount() {
             if (crossOriginIsolated)
                   console.log('SharedArrayBuffer enabled.')
-
-            const count = await getCount();
-            this.setState({
-                  count
-            })
       }
 
       onChangeInput = (e) => {
@@ -90,14 +82,13 @@ export default class Home extends React.Component {
                   const audio_link = extractAudioLink(resourceStr);
                   const data = await mergeVideo(video_link, audio_link);
                   const videoSrc = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                  const count = await increaseCount();
+                 
                   this.setState(prevState => {
                         return {
                               ...prevState,
                               videoSrc,
                               loading: false,
                               status: "Thanks for using my app. :D",
-                              count
                         }
                   })
             }
@@ -141,10 +132,7 @@ export default class Home extends React.Component {
                               <button onClick={this.checkHDhandler}
                                     className="check-button">
                                     Check SD/HD</button>
-                              <div className="color-box">
-                                    <div>download counts</div>
-                                    <div>{this.state.count}</div>
-                              </div>
+                              
                               <div className="status">{this.state.status}{this.state.loading && spinner}</div>
                               {this.state.videoSrc && <video className="video-player"
                                     src={this.state.videoSrc} controls></video>}
@@ -289,28 +277,7 @@ export default class Home extends React.Component {
                                     background:#8d99ae !important;
                                     cursor: not-allowed;
                               }
-                              .color-box{
-                                    min-width:380px;
-                                    border-radius:3px;
-                                    display:flex;
-                                    border: 2px solid #00bbe0;
-                                    margin-bottom:5px;
-                              }
-                              .color-box>div{
-                                    flex:1;
-                                    display:flex;
-                                    justify-content:center;
-                                    padding:0.2rem 1.1rem;
-                              }
-                              .color-box>div:first-child{
-                                    background:#00bbe0;
-                                    color:white;
-                              }
-                              
-                              .color-box>div:last-child{
-                                    background:white;
-                                    color: rgba(0,0,0, 0.5);
-                              }
+                             
                         `}</style>
 
                         <style jsx global>{`

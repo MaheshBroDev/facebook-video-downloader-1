@@ -82,15 +82,3 @@ export async function mergeVideo(video, audio) {
       let data = await ffmpeg.FS('readFile', 'output.mp4');
       return data;
 };
-
-export async function increaseCount() {
-      const res = await fetch(window.location.origin + '/api/downloaded');
-      const data = await res.json();
-      return data.count;
-}
-
-export async function getCount(){
-      const res = await fetch(window.location.origin + '/api/downloads');
-      const data = await res.json();
-      return data.count;
-}
