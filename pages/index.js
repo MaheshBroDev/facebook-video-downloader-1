@@ -209,17 +209,20 @@ export default class Home extends React.Component {
                                     color:white;
                               }
                               .options{
+                                    padding:0 20px;
                                     margin-top:10px;
                                     min-width:0;
                                     display:flex;
                                     gap:20px;
-                                    justify-content:space-around;
+                              }
+                              #hd,#sd{
+                                    flex:1;
                               }
                               .hide{
                                     display:none;
                               }
                               .video-player{
-                                    min-width:400px;
+                                    width:380px;
                               }
                               .input-box{
                                     margin:10px 0;
@@ -227,7 +230,7 @@ export default class Home extends React.Component {
                                     outline:none;
                                     border-radius:5px;
                                     min-width:380px;
-                                    min-height:80px;
+                                    min-height:120px;
                                     color:black;
                                     padding:8px;
                                     background:#e8eded;
