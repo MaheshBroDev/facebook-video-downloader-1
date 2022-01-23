@@ -55,9 +55,7 @@ export async function mergeVideo(video, audio, options) {
                   console.log('parsing', (parseInt(ratio) * 100) + '%')
             });
       }
-      let videoSize = 0;
       const videoFile = await fetchFile(video, options);
-      let audioSize = 0;
       ffmpeg.FS('writeFile', 'video.mp4', videoFile);
       const audioFile = await fetchFile(audio, options);
       ffmpeg.FS('writeFile', 'audio.mp4', audioFile);
