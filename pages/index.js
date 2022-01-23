@@ -7,7 +7,13 @@ import {
       extractAudioLink,
       mergeVideo,
 } from '../util';
-import Modal from '../components/Modal';
+import {
+      Modal,
+      Spinner,
+      NetworkMonitor,
+      MediaOptions,
+      VideoPlayer
+} from '../components/';
 
 export default class Home extends React.Component {
       state = {
@@ -40,7 +46,7 @@ export default class Home extends React.Component {
             })
       }
 
-      async componentDidMount() {
+      componentDidMount() {
             if (crossOriginIsolated)
                   console.log('SharedArrayBuffer enabled.')
       }
@@ -54,16 +60,13 @@ export default class Home extends React.Component {
       }
 
       checkHDhandler = () => {
-            const media = checkMedia(this.state.resourceStr);
-            this.update({ media });
-            if (media.hd || media.sd) {
-                  const resolutions = checkResolutions(this.state.resourceStr);
-                  // console.log('resolutions', resolutions);
-                  this.update({
-                        resolutions,
-                        isModalVisible: true
-                  })
-            }
+            const resolutions = checkResolutions(this.state.resourceStr);
+            const media = checkMedia(resolutions);
+            this.update({
+                  resolutions,
+                  isModalVisible: true,
+                  media
+            })
       }
 
       extractLinkHandler = async () => {
@@ -83,9 +86,8 @@ export default class Home extends React.Component {
                   })
                   const data = await mergeVideo(video_link, audio_link,
                         { getContentLength, progress });
-                  console.log('file size', ((data.byteLength / 1024) / 1024).toFixed(2), 'MB');
-                  const videoSrc = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-
+                  const videoSrc = URL.createObjectURL(new Blob([data.buffer],
+                        { type: 'video/mp4' }));
                   this.update({
                         videoSrc,
                         loading: false,
@@ -98,22 +100,13 @@ export default class Home extends React.Component {
                   selectedMedia: e.target.value
             })
       }
-      hideModal = (that) => {
-            that.update({
+      hideModal = () => {
+            this.update({
                   isModalVisible: false
             })
       }
 
       render() {
-            const spinner = (
-                  <div className="lds-ellipsis">
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                        <div></div>
-                  </div>
-            );
-
             const contentLengthInMB = (this.state.contentLength / 1048576).toFixed(2);
             const chunkSizeInMB = (this.state.chunkSize / 1048576).toFixed(2);
             return (
@@ -129,69 +122,25 @@ export default class Home extends React.Component {
                                     Check SD/HD</button>
 
                               <div className="status">
-                                    <div>{this.state.loading && spinner}</div>
+                                    <div>{this.state.loading && <Spinner />}</div>
                                     <div>
-                                          {this.state.loading &&
-                                                <div className="network">
-                                                      <div>{chunkSizeInMB}</div>
-                                                      <div>MB / </div>
-                                                      <div>{contentLengthInMB}</div>
-                                                      <div>MB</div>
-                                                </div>}
+                                          {this.state.loading
+                                                && <NetworkMonitor
+                                                      contentLength={contentLengthInMB}
+                                                      chunkSize={chunkSizeInMB} />}
                                     </div>
-
                               </div>
-                              {this.state.videoSrc && <video className="video-player"
-                                    src={this.state.videoSrc} controls></video>}
+                              <VideoPlayer videoSrc={this.state.videoSrc} />
                         </div>
                         <Modal
                               visible={this.state.isModalVisible}>
                               <h2>Select Resolution</h2>
-                              <div className="options">
-                                    <div id="sd" className={this.state.media.sd ? "" : "hide"}>
-                                          <p>SD:</p>
-
-                                          <div id="p144"
-                                                className={this.state.resolutions['144p'] ? "" : "hide"}>
-                                                <input type="radio" name="media"
-                                                      onClick={this.selectMedia} value="144p" />
-                                                <label>144p</label>
-                                          </div>
-
-                                          <div id="p240"
-                                                className={this.state.resolutions['240p'] ? "" : "hide"}>
-                                                <input type="radio" name="media"
-                                                      onClick={this.selectMedia} value="240p" />
-                                                <label>240p</label>
-                                          </div>
-
-                                          <div id="p360"
-                                                className={this.state.resolutions['360p'] ? "" : "hide"} >
-                                                <input type="radio" name="media"
-                                                      onClick={this.selectMedia} value="360p" />
-                                                <label>360p</label>
-                                          </div>
-
-                                          <div id="p480"
-                                                className={this.state.resolutions['480p'] ? "" : "hide"} >
-                                                <input type="radio" name="media"
-                                                      onClick={this.selectMedia} value="480p" />
-                                                <label>480p</label>
-                                          </div>
-                                    </div>
-                                    <div id="hd"
-                                          className={this.state.media.hd ? "" : "hide"}>
-                                          <p>HD:</p>
-                                          <div id="p720"
-                                                className={this.state.resolutions['720p'] ? "" : "hide"} >
-                                                <input type="radio" name="media"
-                                                      onClick={this.selectMedia} value="720p" />
-                                                <label>720p</label>
-                                          </div>
-                                    </div>
-                              </div>
+                              <MediaOptions
+                                    resolutions={this.state.resolutions}
+                                    selectMedia={this.selectMedia}
+                                    media={this.state.media} />
                               <div className="modal-footer">
-                                    <button onClick={() => this.hideModal(this)}
+                                    <button onClick={this.hideModal}
                                           className="button">
                                           Cancel
                                     </button>
@@ -214,22 +163,6 @@ export default class Home extends React.Component {
                                     align-items: center;
                                     background:#ffffff;
                                     color:white;
-                              }
-                              .options{
-                                    padding:0 20px;
-                                    margin-top:10px;
-                                    min-width:0;
-                                    display:flex;
-                                    gap:20px;
-                              }
-                              #hd,#sd{
-                                    flex:1;
-                              }
-                              .hide{
-                                    display:none;
-                              }
-                              .video-player{
-                                    width:380px;
                               }
                               .input-box{
                                     margin:10px 0;
@@ -292,14 +225,6 @@ export default class Home extends React.Component {
                                     background:#8d99ae !important;
                                     cursor: not-allowed;
                               }
-                              .network{
-                                    color:#fca311;
-                                    width:180px;
-                                    display:grid;
-                                    grid-template:30px / repeat(4,1fr);
-                                    justify-items:start;
-                                    align-items:center;
-                              }
                              
                         `}</style>
 
@@ -312,65 +237,16 @@ export default class Home extends React.Component {
                               h2{
                                     color:#0b0a0a;
                               }
+                              .hide{
+                                    display:none;
+                              }
                               @media (max-width:480px){
                                     .check-button,
                                     .input-box,.status,
                                     .video-player{
                                           min-width:350px;
                                     }
-                              }
-                              .lds-ellipsis {
-                                    position: relative;
-                                    height:10px;
-                                  }
-                                  .lds-ellipsis div {
-                                    position: absolute;
-                                    width: 8px;
-                                    height: 8px;
-                                    border-radius: 50%;
-                                    background: #0a2342;
-                                    animation-timing-function: cubic-bezier(0, 1, 1, 0);
-                                  }
-                                  .lds-ellipsis div:nth-child(1) {
-                                    left: 8px;
-                                    animation: lds-ellipsis1 0.6s infinite;
-                                  }
-                                  .lds-ellipsis div:nth-child(2) {
-                                    left: 8px;
-                                    animation: lds-ellipsis2 0.6s infinite;
-                                  }
-                                  .lds-ellipsis div:nth-child(3) {
-                                    left: 32px;
-                                    animation: lds-ellipsis2 0.6s infinite;
-                                  }
-                                  .lds-ellipsis div:nth-child(4) {
-                                    left: 56px;
-                                    animation: lds-ellipsis3 0.6s infinite;
-                                  }
-                                  @keyframes lds-ellipsis1 {
-                                    0% {
-                                      transform: scale(0);
-                                    }
-                                    100% {
-                                      transform: scale(1);
-                                    }
-                                  }
-                                  @keyframes lds-ellipsis3 {
-                                    0% {
-                                      transform: scale(1);
-                                    }
-                                    100% {
-                                      transform: scale(0);
-                                    }
-                                  }
-                                  @keyframes lds-ellipsis2 {
-                                    0% {
-                                      transform: translate(0, 0);
-                                    }
-                                    100% {
-                                      transform: translate(24px, 0);
-                                    }
-                                  }                                  
+                              }                               
                         `}</style>
                   </>
             );
