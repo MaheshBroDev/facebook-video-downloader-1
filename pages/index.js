@@ -34,6 +34,7 @@ export default class Home extends React.Component {
             },
             selectedMedia: "",
             loading: false,
+            isLoaded:false,
             isModalVisible: false,
             isSupported: false,
       }
@@ -50,7 +51,12 @@ export default class Home extends React.Component {
       componentDidMount() {
             if (crossOriginIsolated) {
                   this.update({
+                        isLoaded: true,
                         isSupported: true
+                  })
+            }else{
+                  this.update({
+                        isLoaded:true,
                   })
             }
       }
@@ -139,7 +145,9 @@ export default class Home extends React.Component {
                                                 </div>
                                                 <VideoPlayer videoSrc={this.state.videoSrc} />
                                           </>
-                                          : <h1>Your browser is not supported.</h1>
+                                          : this.state.isLoaded
+                                          ?<h1>Your browser is not supported.</h1>
+                                          :<h2>Loading ...</h2>
                               }
                         </div>
                         <Modal
