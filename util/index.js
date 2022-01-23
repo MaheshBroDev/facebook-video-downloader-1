@@ -10,10 +10,11 @@ export function Cleaner(raw_text) {
       }
 };
 
-export function checkMedia(str) {
+export function checkMedia(resolutions = {}) {
       return {
-            sd: (str + "").includes('FBQualityClass="sd"'),
-            hd: (str + "").includes('FBQualityClass="hd"')
+            sd: Object.keys(resolutions).some(el =>
+                  el !== '720p' && resolutions[el]),
+            hd: resolutions['720p']
       }
 }
 

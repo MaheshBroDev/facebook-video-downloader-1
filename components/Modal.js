@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
-export default function Modal({ visible,children }) {
+export function Modal({ visible,children }) {
       const [isBrowser, setBrowser] = useState(false);
       useEffect(() => {
             setBrowser(true);
