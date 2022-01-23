@@ -20,6 +20,7 @@ app
                   if ('/' === pathname) {
                         res.setHeader('Cross-Origin-Embedder-Policy', 'require-corp')
                         res.setHeader('Cross-Origin-Opener-Policy', 'same-origin')
+                        res.setHeader('Access-Control-Expose-Headers','Content-Length')
                   }
                   handle(req, res)
             })
