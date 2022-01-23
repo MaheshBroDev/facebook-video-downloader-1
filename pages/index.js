@@ -207,10 +207,10 @@ export default class Home extends React.Component {
                               .container {
                                     width:100vw;
                                     min-height: 100vh;
-                                    padding: 0 0.5rem;
+                                    padding: 100px 0.5rem 0;
                                     display: flex;
                                     flex-direction: column;
-                                    justify-content: center;
+                                    justify-content: flex-start;
                                     align-items: center;
                                     background:#ffffff;
                                     color:white;
