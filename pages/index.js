@@ -34,7 +34,8 @@ export default class Home extends React.Component {
             },
             selectedMedia: "",
             loading: false,
-            isModalVisible: false
+            isModalVisible: false,
+            isSupported: false,
       }
 
       update = (newObj) => {
@@ -47,8 +48,11 @@ export default class Home extends React.Component {
       }
 
       componentDidMount() {
-            if (crossOriginIsolated)
-                  console.log('SharedArrayBuffer enabled.')
+            if (crossOriginIsolated) {
+                  this.update({
+                        isSupported: true
+                  })
+            }
       }
 
       onChangeInput = (e) => {
@@ -112,25 +116,31 @@ export default class Home extends React.Component {
             return (
                   <>
                         <div className="container">
-                              <h1>Facebook Video Downloader</h1>
-                              <textarea className="input-box"
-                                    placeholder="view-source: link and paste here"
-                                    onChange={this.onChangeInput} ></textarea>
+                              {
+                                    this.state.isSupported
+                                          ? <>
+                                                <h1>Facebook Video Downloader</h1>
+                                                <textarea className="input-box"
+                                                      placeholder="view-source: link and paste here"
+                                                      onChange={this.onChangeInput} ></textarea>
 
-                              <button onClick={this.checkHDhandler}
-                                    className="check-button">
-                                    Check SD/HD</button>
+                                                <button onClick={this.checkHDhandler}
+                                                      className="check-button">
+                                                      Check SD/HD</button>
 
-                              <div className="status">
-                                    <div>{this.state.loading && <Spinner />}</div>
-                                    <div>
-                                          {this.state.loading
-                                                && <NetworkMonitor
-                                                      contentLength={contentLengthInMB}
-                                                      chunkSize={chunkSizeInMB} />}
-                                    </div>
-                              </div>
-                              <VideoPlayer videoSrc={this.state.videoSrc} />
+                                                <div className="status">
+                                                      <div>{this.state.loading && <Spinner />}</div>
+                                                      <div>
+                                                            {this.state.loading
+                                                                  && <NetworkMonitor
+                                                                        contentLength={contentLengthInMB}
+                                                                        chunkSize={chunkSizeInMB} />}
+                                                      </div>
+                                                </div>
+                                                <VideoPlayer videoSrc={this.state.videoSrc} />
+                                          </>
+                                          : <h1>Your browser is not supported.</h1>
+                              }
                         </div>
                         <Modal
                               visible={this.state.isModalVisible}>
