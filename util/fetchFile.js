@@ -34,8 +34,8 @@ module.exports = async (_data,options) => {
                         .then(response => {
                               if (typeof getContentLength === 'function') {
                                     const length = response.headers.get('Content-Length');
-                                    console.log('length->',length)
-                                    getContentLength(parseInt(length)??0)
+                                    // console.log('length->',length)
+                                    getContentLength(parseInt(length??0))
                               }
                               return response.body;
                         })
