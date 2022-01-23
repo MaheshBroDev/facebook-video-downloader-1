@@ -48,24 +48,18 @@ export function extractAudioLink(str) {
 }
 
 
-export async function mergeVideo(video, audio) {
+export async function mergeVideo(video, audio, options) {
       if (!ffmpeg.isLoaded()) {
             await ffmpeg.load();
             ffmpeg.setProgress(({ ratio }) => {
                   console.log('parsing', (parseInt(ratio) * 100) + '%')
             });
       }
-      let videoSize=0;
-      const videoFile = await fetchFile(video,({value})=>{
-            videoSize+=value.byteLength;
-            // console.log('total',videoSize);
-      });
-      let audioSize=0;
+      let videoSize = 0;
+      const videoFile = await fetchFile(video, options);
+      let audioSize = 0;
       ffmpeg.FS('writeFile', 'video.mp4', videoFile);
-      const audioFile = await fetchFile(audio,({value})=>{
-            audioSize+=value.byteLength;
-            // console.log('total',audioSize);
-      });
+      const audioFile = await fetchFile(audio, options);
       ffmpeg.FS('writeFile', 'audio.mp4', audioFile);
 
       await ffmpeg.run('-i', 'video.mp4', '-i', 'audio.mp4', '-c', 'copy', 'output.mp4');

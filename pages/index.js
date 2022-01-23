@@ -11,6 +11,8 @@ import Modal from '../components/Modal';
 
 export default class Home extends React.Component {
       state = {
+            contentLength: 0,
+            chunkSize: 0,
             videoSrc: "",
             resourceStr: "",
             media: {
@@ -26,8 +28,16 @@ export default class Home extends React.Component {
             },
             selectedMedia: "",
             loading: false,
-            isModalVisible: false,
-            status: ":D",
+            isModalVisible: false
+      }
+
+      update = (newObj) => {
+            this.setState(prevState => {
+                  return {
+                        ...prevState,
+                        ...newObj
+                  }
+            })
       }
 
       async componentDidMount() {
@@ -36,33 +46,22 @@ export default class Home extends React.Component {
       }
 
       onChangeInput = (e) => {
-            this.setState(prevState => {
-                  const cleaner = new Cleaner(e.target.value);
-                  let resourceStr = cleaner.clean("\\", "amp;", " ").value;
-                  return {
-                        ...prevState,
-                        resourceStr
-                  }
+            const cleaner = new Cleaner(e.target.value);
+            let resourceStr = cleaner.clean("\\", "amp;", " ").value;
+            this.update({
+                  resourceStr
             })
       }
 
       checkHDhandler = () => {
             const media = checkMedia(this.state.resourceStr);
-            this.setState(prevState => {
-                  return {
-                        ...prevState,
-                        media
-                  }
-            })
+            this.update({ media });
             if (media.hd || media.sd) {
                   const resolutions = checkResolutions(this.state.resourceStr);
                   // console.log('resolutions', resolutions);
-                  this.setState(prevState => {
-                        return {
-                              ...prevState,
-                              resolutions,
-                              isModalVisible: true
-                        }
+                  this.update({
+                        resolutions,
+                        isModalVisible: true
                   })
             }
       }
@@ -70,57 +69,53 @@ export default class Home extends React.Component {
       extractLinkHandler = async () => {
             const { resourceStr, selectedMedia } = this.state;
             if (resourceStr && selectedMedia) {
-                  this.setState(prevState => {
-                        return {
-                              ...prevState,
-                              loading: true,
-                              isModalVisible: false,
-                              status: ""
-                        }
+                  this.update({
+                        loading: true,
+                        isModalVisible: false,
                   })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
                   const audio_link = extractAudioLink(resourceStr);
-                  const data = await mergeVideo(video_link, audio_link);
+                  const getContentLength = (length) => this.update({
+                        contentLength: length + this.state.contentLength
+                  });
+                  const progress = ({ done, value }) => this.update({
+                        chunkSize: this.state.chunkSize + value.byteLength
+                  })
+                  const data = await mergeVideo(video_link, audio_link,
+                        { getContentLength, progress });
+                  console.log('file size', ((data.byteLength / 1024) / 1024).toFixed(2), 'MB');
                   const videoSrc = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-                 
-                  this.setState(prevState => {
-                        return {
-                              ...prevState,
-                              videoSrc,
-                              loading: false,
-                              status: "Thanks for using my app. :D",
-                        }
+
+                  this.update({
+                        videoSrc,
+                        loading: false,
                   })
             }
       }
 
       selectMedia = (e) => {
-            this.setState(prevState => {
-                  return {
-                        selectedMedia: e.target.value
-                  }
+            this.update({
+                  selectedMedia: e.target.value
             })
       }
       hideModal = (that) => {
-            that.setState(prevState => {
-                  return {
-                        ...prevState,
-                        isModalVisible: false
-                  }
+            that.update({
+                  isModalVisible: false
             })
       }
 
       render() {
             const spinner = (
-                  <>
-                        <div className="lds-ellipsis">
-                              <div></div>
-                              <div></div>
-                              <div></div>
-                              <div></div>
-                        </div>
-                  </>
+                  <div className="lds-ellipsis">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                  </div>
             );
+
+            const contentLengthInMB = (this.state.contentLength / 1048576).toFixed(2);
+            const chunkSizeInMB = (this.state.chunkSize / 1048576).toFixed(2);
             return (
                   <>
                         <div className="container">
@@ -132,8 +127,20 @@ export default class Home extends React.Component {
                               <button onClick={this.checkHDhandler}
                                     className="check-button">
                                     Check SD/HD</button>
-                              
-                              <div className="status">{this.state.status}{this.state.loading && spinner}</div>
+
+                              <div className="status">
+                                    <div>{this.state.loading && spinner}</div>
+                                    <div>
+                                          {this.state.loading &&
+                                                <div className="network">
+                                                      <div>{chunkSizeInMB}</div>
+                                                      <div>MB / </div>
+                                                      <div>{contentLengthInMB}</div>
+                                                      <div>MB</div>
+                                                </div>}
+                                    </div>
+
+                              </div>
                               {this.state.videoSrc && <video className="video-player"
                                     src={this.state.videoSrc} controls></video>}
                         </div>
@@ -253,7 +260,12 @@ export default class Home extends React.Component {
                               .status{
                                     color:#0b0a0a;
                                     min-width:380px;
-                                    text-align:left;
+                                    min-height:0px;
+                                    box-sizing:border-box;
+                                    display:grid;
+                                    grid-template:auto / repeat(2,1fr);
+                                    align-items:center;
+                                    gap:25px;
                               }
                               .modal-footer{
                                     width:100%;
@@ -280,6 +292,14 @@ export default class Home extends React.Component {
                                     background:#8d99ae !important;
                                     cursor: not-allowed;
                               }
+                              .network{
+                                    color:#fca311;
+                                    width:180px;
+                                    display:grid;
+                                    grid-template:30px / repeat(4,1fr);
+                                    justify-items:start;
+                                    align-items:center;
+                              }
                              
                         `}</style>
 
@@ -300,9 +320,8 @@ export default class Home extends React.Component {
                                     }
                               }
                               .lds-ellipsis {
-                                    display: inline-block;
                                     position: relative;
-                                    background:yellow;
+                                    height:10px;
                                   }
                                   .lds-ellipsis div {
                                     position: absolute;

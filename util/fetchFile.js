@@ -1,5 +1,3 @@
-const resolveURL = require('resolve-url');
-
 const readFromBlobOrFile = (blob) => (
       new Promise((resolve, reject) => {
             const fileReader = new FileReader();
@@ -13,7 +11,12 @@ const readFromBlobOrFile = (blob) => (
       })
 );
 
-module.exports = async (_data, callback) => {
+module.exports = async (_data,options) => {
+      let getContentLength,progress;
+      if(options){
+            getContentLength=options?.getContentLength;
+            progress=options?.progress;
+      }
       let data = _data;
       if (typeof _data === 'undefined') {
             return new Uint8Array();
@@ -27,19 +30,28 @@ module.exports = async (_data, callback) => {
                         .map((c) => c.charCodeAt(0));
                   /* From remote server/URL */
             } else {
-                  const res=await fetch(resolveURL(_data))
-                        .then(response => response.body)
-                        .then(rs =>consume(rs))
+                  const res = await fetch(new URL(_data))
+                        .then(response => {
+                              if (typeof getContentLength === 'function') {
+                                    const length = response.headers.get('Content-Length');
+                                    console.log('length->',length)
+                                    getContentLength(parseInt(length)??0)
+                              }
+                              return response.body;
+                        })
+                        .then(rs => consume(rs))
                         .then(rs => new Response(rs))
                         .then(rs => rs.blob());
-                  data=await res.arrayBuffer();
+                  // const res=await fetch(resolveURL(_data))
+
+                  data = await res.arrayBuffer();
             }
             /* From Blob or File */
       } else if (_data instanceof File || _data instanceof Blob) {
             data = await readFromBlobOrFile(_data);
       }
 
-      function consume(rs){
+      function consume(rs) {
             const reader = rs.getReader();
             return new ReadableStream({
                   async start(controller) {
@@ -48,16 +60,15 @@ module.exports = async (_data, callback) => {
                               if (done) {
                                     break;
                               }
-                              if(typeof callback === 'function')
-                              {
-                                    callback({done,value})
+                              if (typeof progress === 'function') {
+                                    progress({ done, value })
                               }
                               controller.enqueue(value);
                         }
                         controller.close();
                         reader.releaseLock();
                   }
-            })   
+            })
       }
       return new Uint8Array(data);
 };
