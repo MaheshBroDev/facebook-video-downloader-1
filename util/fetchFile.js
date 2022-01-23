@@ -1,5 +1,3 @@
-const resolveURL = require('resolve-url');
-
 const readFromBlobOrFile = (blob) => (
       new Promise((resolve, reject) => {
             const fileReader = new FileReader();
