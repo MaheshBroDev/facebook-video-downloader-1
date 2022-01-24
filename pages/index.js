@@ -30,6 +30,7 @@ export default class Home extends React.Component {
                   '240p': false,
                   '360p': false,
                   '480p': false,
+                  '540p':false,
                   '720p': false,
             },
             selectedMedia: "",
