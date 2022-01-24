@@ -3,7 +3,7 @@
 
 [![GPL 3.0 License](https://img.shields.io/badge/license-GPL%203.0-green)](https://github.com/channyeintun/facebook-video-downloader/blob/main/LICENSE) 
 
-Private videos in your facebook can be downloaded in mutiple resolutions (144p, 240p, 360p, 480p, 720p). This app can only be used in chrome - desktop browser. Mainly implemented for group videos. Therefore, videos across other places inside facebook except groups will not work properly.
+Private videos in your facebook can be downloaded in mutiple resolutions (144p, 240p, 360p, 480p,540p, 720p). This app can only be used in chrome - desktop browser. Mainly implemented for group videos. Therefore, videos across other places inside facebook except groups will not work properly.
 
 
 ## Features
