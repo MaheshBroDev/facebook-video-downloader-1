@@ -24,6 +24,7 @@ export function checkResolutions(str) {
             '240p': (str + "").includes('FBQualityLabel="240p"'),
             '360p': (str + "").includes('FBQualityLabel="360p"'),
             '480p': (str + "").includes('FBQualityLabel="480p"'),
+            '540p': (str + "").includes('FBQualityLabel="540p"'),
             '720p': (str + "").includes('FBQualityLabel="720p"')
       }
 }

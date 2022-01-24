@@ -34,6 +34,13 @@ export function MediaOptions({media,
                                           onClick={selectMedia} value="480p" />
                                     <label>480p</label>
                               </div>
+
+                              <div id="p540"
+                                    className={resolutions['540p'] ? "" : "hide"} >
+                                    <input type="radio" name="media"
+                                          onClick={selectMedia} value="540p" />
+                                    <label>540p</label>
+                              </div>
                         </div>
                         <div id="hd"
                               className={media?.hd ? "" : "hide"}>
