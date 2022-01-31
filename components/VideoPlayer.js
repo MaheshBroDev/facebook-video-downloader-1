@@ -10,6 +10,8 @@ export function VideoPlayer({videoSrc}){
             <style jsx>{`
                         .video-player{
                               width:380px;
+                              border:1px solid black;
+                              margin-top:10px;
                         }
             `}</style>
             </>

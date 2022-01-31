@@ -10,7 +10,7 @@ module.exports = async (_data, options) => {
             return new Uint8Array();
       }
 
-      if (typeof _data === 'string') {
+      if (typeof _data === 'string' && _data !== "") {
             const res = await fetch(new URL(_data))
                   .then(response => {
                         if (typeof getContentLength === 'function') {

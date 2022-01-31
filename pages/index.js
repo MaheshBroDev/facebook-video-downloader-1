@@ -12,7 +12,8 @@ import {
       Spinner,
       NetworkMonitor,
       MediaOptions,
-      VideoPlayer
+      VideoPlayer,
+      SaveIcon
 } from '../components/';
 
 export default class Home extends React.Component {
@@ -30,14 +31,15 @@ export default class Home extends React.Component {
                   '240p': false,
                   '360p': false,
                   '480p': false,
-                  '540p':false,
+                  '540p': false,
                   '720p': false,
             },
             selectedMedia: "",
             loading: false,
-            isLoaded:false,
+            isLoaded: false,
             isModalVisible: false,
             isSupported: false,
+            fileName: "",
       }
 
       update = (newObj) => {
@@ -55,9 +57,9 @@ export default class Home extends React.Component {
                         isLoaded: true,
                         isSupported: true
                   })
-            }else{
+            } else {
                   this.update({
-                        isLoaded:true,
+                        isLoaded: true,
                   })
             }
       }
@@ -144,11 +146,23 @@ export default class Home extends React.Component {
                                                                         chunkSize={chunkSizeInMB} />}
                                                       </div>
                                                 </div>
+                                                {this.state.videoSrc && <div className="save-to-device">
+                                                      <input
+                                                            onChange={(e) => this.update({
+                                                                  fileName: e.target.value
+                                                            })}
+                                                            className="file-name"
+                                                            placeholder="File Name" />
+                                                      {this.state.fileName ? <a className="save-button"
+                                                            href={this.state.videoSrc} download={this.state.fileName}>
+                                                            <SaveIcon />
+                                                      </a> : <a className="save-button"><SaveIcon /></a>}
+                                                </div>}
                                                 <VideoPlayer videoSrc={this.state.videoSrc} />
                                           </>
                                           : this.state.isLoaded
-                                          ?<h1>Your browser is not supported.</h1>
-                                          :<h2>Loading ...</h2>
+                                                ? <h1>Your browser is not supported.</h1>
+                                                : <h2>Loading ...</h2>
                               }
                         </div>
                         <Modal
@@ -183,6 +197,7 @@ export default class Home extends React.Component {
                                     background:#ffffff;
                                     color:white;
                               }
+                              
                               .input-box{
                                     margin:10px 0;
                                     border:none;
@@ -204,8 +219,9 @@ export default class Home extends React.Component {
                                     background:#0a2342;
                                     color:white;
                                     text-align:center;
+                                    cursor:pointer;
                               }
-                              .check-button:hover{
+                              .check-button:hover , .save-button:hover{
                                     filter:brightness(1.5);
                                     transition:filter 300ms;
                               }
@@ -234,6 +250,7 @@ export default class Home extends React.Component {
                                     background:#29C5F6;
                                     text-align:center;
                                     border:none;
+                                    cursor:pointer;
                               }
                               .button:hover{
                                     filter:brightness(1.3);
@@ -244,7 +261,30 @@ export default class Home extends React.Component {
                                     background:#8d99ae !important;
                                     cursor: not-allowed;
                               }
-                             
+                              .save-to-device{
+                                    min-width:380px;
+                                    height:30px;
+                                    display:flex;
+                                    justify-content:space-between;
+                                    gap:5px;
+                                    box-sizing:border-box;
+                              }
+                              .file-name{
+                                    width:calc(100% - 25px);
+                                    height:100%;
+                                    padding:0 8px;
+                              }
+                              .save-button{
+                                    min-width:25px;
+                                    height:100%;
+                                    padding:5px;
+                                    background:#0a2342;
+                                    border-radius:5px;
+                                    text-decoration:none;
+                                    color:white;
+                                    text-align:center;
+                                    cursor:pointer;
+                              }
                         `}</style>
 
                         <style jsx global>{`
