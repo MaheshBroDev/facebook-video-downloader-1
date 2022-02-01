@@ -1,17 +1,18 @@
-
-module.exports = async (_data, options) => {
-      let getContentLength, progress;
+export const fetchFile = async (_data, options) => {
+      let getContentLength, progress, handleError, error, controller;
       if (options) {
             getContentLength = options?.getContentLength;
             progress = options?.progress;
+            handleError = options?.handleError;
+            controller = options?.controller;
       }
       let data = _data;
       if (typeof _data === 'undefined') {
-            return new Uint8Array();
+            return Promise.reject(new Error('Cannot be undefined'));
       }
 
       if (typeof _data === 'string' && _data !== "") {
-            const res = await fetch(new URL(_data))
+            const res = await fetch(new URL(_data), { signal: controller.signal })
                   .then(response => {
                         if (typeof getContentLength === 'function') {
                               const length = response.headers.get('Content-Length');
@@ -21,8 +22,20 @@ module.exports = async (_data, options) => {
                   })
                   .then(rs => consume(rs))
                   .then(rs => new Response(rs))
-                  .then(rs => rs.blob());
-            data = await res.arrayBuffer();
+                  .then(rs => rs.blob())
+                  .catch(err => {
+                        if (!controller.signal.aborted && typeof handleError === 'function') {
+                              handleError(err);
+                        } else {
+                              handleError('')
+                        }
+                        error = err;
+                  });
+            if (!error) {
+                  data = await res.arrayBuffer();
+            } else {
+                  return Promise.reject(error);
+            }
       }
 
       function consume(rs) {

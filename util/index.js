@@ -1,4 +1,4 @@
-const fetchFile = require('./fetchFile');
+import { fetchFile } from "./fetchFile";
 import { ffmpeg } from "./ffmpeg";
 
 export function Cleaner(raw_text) {

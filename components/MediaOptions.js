@@ -6,7 +6,6 @@ export function MediaOptions({media,
                   <div className="options">
                         <div id="sd" className={media?.sd ? "" : "hide"}>
                               <p>SD:</p>
-
                               <div id="p144"
                                     className={resolutions['144p'] ? "" : "hide"}>
                                     <input type="radio" name="media"
@@ -58,11 +57,22 @@ export function MediaOptions({media,
                               padding:0 20px;
                               margin-top:10px;
                               min-width:0;
+                              min-height:140px;
                               display:flex;
                               gap:20px;
                         }
                         #hd,#sd{
                               flex:1;
+                              display:flex;
+                              flex-direction:column;
+                              gap:5px;
+                        }
+                        .options p{
+                              margin-bottom:10px;
+                        }
+
+                        input[name="media"]{
+                              margin-right:8px;
                         }
                   `}</style>
             </>

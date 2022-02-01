@@ -40,6 +40,8 @@ export default class Home extends React.Component {
             isModalVisible: false,
             isSupported: false,
             fileName: "",
+            error: "",
+            controller: null
       }
 
       update = (newObj) => {
@@ -56,7 +58,7 @@ export default class Home extends React.Component {
                   this.update({
                         isLoaded: true,
                         isSupported: true
-                  })
+                  });
             } else {
                   this.update({
                         isLoaded: true,
@@ -84,10 +86,13 @@ export default class Home extends React.Component {
 
       extractLinkHandler = async () => {
             const { resourceStr, selectedMedia } = this.state;
+            const controller = new AbortController();
             if (resourceStr && selectedMedia) {
                   this.update({
                         loading: true,
                         isModalVisible: false,
+                        error: "",
+                        controller
                   })
                   const video_link = extractVideoLink(resourceStr, selectedMedia);
                   const audio_link = extractAudioLink(resourceStr);
@@ -97,8 +102,17 @@ export default class Home extends React.Component {
                   const progress = ({ done, value }) => this.update({
                         chunkSize: this.state.chunkSize + value.byteLength
                   })
+
+                  const handleError = (error) => this.update({
+                        contentLength: 0,
+                        chunkSize: 0,
+                        loading: false,
+                        error: error.message,
+                        controller: null
+                  })
                   const data = await mergeVideo(video_link, audio_link,
-                        { getContentLength, progress });
+                        { getContentLength, progress, handleError, controller });
+                  if (this.state.error) return void 0;
                   const videoSrc = URL.createObjectURL(new Blob([data.buffer],
                         { type: 'video/mp4' }));
                   this.update({
@@ -119,6 +133,11 @@ export default class Home extends React.Component {
             })
       }
 
+      cleanVideo = () => {
+            URL.revokeObjectURL(this.state.videoSrc);
+            this.update({ videoSrc: "", resourceStr: "" });
+      }
+
       render() {
             const contentLengthInMB = (this.state.contentLength / 1048576).toFixed(2);
             const chunkSizeInMB = (this.state.chunkSize / 1048576).toFixed(2);
@@ -130,12 +149,21 @@ export default class Home extends React.Component {
                                           ? <>
                                                 <h1>Facebook Video Downloader</h1>
                                                 <textarea className="input-box"
+                                                      value={this.state.resourceStr}
                                                       placeholder="view-source: link and paste here"
                                                       onChange={this.onChangeInput} ></textarea>
 
-                                                <button onClick={this.checkHDhandler}
-                                                      className="check-button">
-                                                      Check SD/HD</button>
+                                                {this.state.loading
+                                                      ? <button onClick={() => this.state.controller?.abort()}
+                                                            className="check-button">
+                                                            Cancel</button>
+                                                      : this.state.videoSrc
+                                                            ? <button onClick={this.cleanVideo}
+                                                                  className="check-button">
+                                                                  Clear</button>
+                                                            : <button onClick={this.checkHDhandler}
+                                                                  className="check-button">
+                                                                  Check SD/HD</button>}
 
                                                 <div className="status">
                                                       <div>{this.state.loading && <Spinner />}</div>
@@ -146,6 +174,7 @@ export default class Home extends React.Component {
                                                                         chunkSize={chunkSizeInMB} />}
                                                       </div>
                                                 </div>
+                                                {this.state.error && <div className="error">{this.state.error}</div>}
                                                 {this.state.videoSrc && <div className="save-to-device">
                                                       <input
                                                             onChange={(e) => this.update({
@@ -284,6 +313,12 @@ export default class Home extends React.Component {
                                     color:white;
                                     text-align:center;
                                     cursor:pointer;
+                              }
+                              .error{
+                                    color:red;
+                                    padding:8px 4px;
+                                    text-align:left;
+                                    width:380px;
                               }
                         `}</style>
 
