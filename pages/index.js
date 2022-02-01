@@ -118,6 +118,8 @@ export default class Home extends React.Component {
                   this.update({
                         videoSrc,
                         loading: false,
+                        chunkSize: 0,
+                        contentLength: 0,
                   })
             }
       }
@@ -138,6 +140,14 @@ export default class Home extends React.Component {
             this.update({ videoSrc: "", resourceStr: "" });
       }
 
+      cancelDownload = () => {
+            this.state.controller?.abort();
+            this.update({
+                  chunkSize: 0,
+                  contentLength: 0,
+            })
+      }
+
       render() {
             const contentLengthInMB = (this.state.contentLength / 1048576).toFixed(2);
             const chunkSizeInMB = (this.state.chunkSize / 1048576).toFixed(2);
@@ -154,7 +164,7 @@ export default class Home extends React.Component {
                                                       onChange={this.onChangeInput} ></textarea>
 
                                                 {this.state.loading
-                                                      ? <button onClick={() => this.state.controller?.abort()}
+                                                      ? <button onClick={this.cancelDownload}
                                                             className="check-button">
                                                             Cancel</button>
                                                       : this.state.videoSrc
