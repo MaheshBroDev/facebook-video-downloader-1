@@ -1,4 +1,5 @@
 import React from "react";
+import { ffmpeg } from "../util/ffmpeg";
 import {
       checkMedia,
       checkResolutions,
@@ -138,6 +139,7 @@ export default class Home extends React.Component {
       cleanVideo = () => {
             URL.revokeObjectURL(this.state.videoSrc);
             this.update({ videoSrc: "", resourceStr: "" });
+            ffmpeg.exit();
       }
 
       cancelDownload = () => {
@@ -145,7 +147,8 @@ export default class Home extends React.Component {
             this.update({
                   chunkSize: 0,
                   contentLength: 0,
-            })
+            });
+            ffmpeg.exit();
       }
 
       render() {
