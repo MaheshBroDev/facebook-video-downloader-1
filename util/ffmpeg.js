@@ -1,6 +1,6 @@
 import { createFFmpeg } from '@ffmpeg/ffmpeg';
 
 export const ffmpeg=createFFmpeg({
-      log: false,
+      log: true,
       corePath: '/ffmpeg-core.js'
 });
