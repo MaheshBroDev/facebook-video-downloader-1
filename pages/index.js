@@ -1,5 +1,4 @@
 import React from "react";
-import { ffmpeg } from "../util/ffmpeg";
 import {
       checkMedia,
       checkResolutions,
@@ -56,6 +55,7 @@ export default class Home extends React.Component {
 
       componentDidMount() {
             if (crossOriginIsolated) {
+                  console.log('SharedArrayBuffer enabled.');
                   this.update({
                         isLoaded: true,
                         isSupported: true
@@ -139,7 +139,6 @@ export default class Home extends React.Component {
       cleanVideo = () => {
             URL.revokeObjectURL(this.state.videoSrc);
             this.update({ videoSrc: "", resourceStr: "" });
-            ffmpeg.exit();
       }
 
       cancelDownload = () => {
@@ -148,7 +147,6 @@ export default class Home extends React.Component {
                   chunkSize: 0,
                   contentLength: 0,
             });
-            ffmpeg.exit();
       }
 
       render() {
