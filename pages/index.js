@@ -111,17 +111,21 @@ export default class Home extends React.Component {
                         error: error.message,
                         controller: null
                   })
-                  const data = await mergeVideo(video_link, audio_link,
-                        { getContentLength, progress, handleError, controller });
-                  if (this.state.error) return void 0;
-                  const videoSrc = URL.createObjectURL(new Blob([data.buffer],
-                        { type: 'video/mp4' }));
-                  this.update({
-                        videoSrc,
-                        loading: false,
-                        chunkSize: 0,
-                        contentLength: 0,
-                  })
+                  try {
+                        const data = await mergeVideo(video_link, audio_link,
+                              { getContentLength, progress, handleError, controller });
+                        if (this.state.error) return void 0;
+                        const videoSrc = URL.createObjectURL(new Blob([data.buffer],
+                              { type: 'video/mp4' }));
+                        this.update({
+                              videoSrc,
+                              loading: false,
+                              chunkSize: 0,
+                              contentLength: 0,
+                        })
+                  } catch (error) {
+                        console.error(error.message)
+                  }
             }
       }
 
