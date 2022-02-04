@@ -51,12 +51,6 @@ export function extractAudioLink(str) {
 
 
 export async function mergeVideo(video, audio, options) {
-      if (!ffmpeg.isLoaded()) {
-            await ffmpeg.load();
-            ffmpeg.setProgress(({ ratio }) => {
-                  console.log('parsing', (parseInt(ratio) * 100) + '%')
-            });
-      }
       const videoFile = await fetchFile(video, options);
       ffmpeg.FS('writeFile', 'video.mp4', videoFile);
       const audioFile = await fetchFile(audio, options);
@@ -67,3 +61,4 @@ export async function mergeVideo(video, audio, options) {
       return data;
 };
 
+export {ffmpeg};

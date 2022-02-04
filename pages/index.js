@@ -6,6 +6,7 @@ import {
       extractVideoLink,
       extractAudioLink,
       mergeVideo,
+      ffmpeg
 } from '../util';
 import {
       Modal,
@@ -53,9 +54,18 @@ export default class Home extends React.Component {
             })
       }
 
-      componentDidMount() {
+      async componentDidMount() {
             if (crossOriginIsolated) {
                   console.log('SharedArrayBuffer enabled.');
+                  if (!ffmpeg.isLoaded()) {
+                        await ffmpeg.load().catch(err=>{
+                              console.error(err);
+                              this.update({error:err})
+                        })
+                        ffmpeg.setProgress(({ ratio }) => {
+                              console.log('parsing', (parseInt(ratio) * 100) + '%')
+                        });
+                  }
                   this.update({
                         isLoaded: true,
                         isSupported: true
