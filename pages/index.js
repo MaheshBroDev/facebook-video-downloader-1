@@ -175,7 +175,7 @@ export default class Home extends React.Component {
                                                 <h1>Facebook Video Downloader</h1>
                                                 <textarea className="input-box"
                                                       value={this.state.resourceStr}
-                                                      placeholder="view-source: link and paste here"
+                                                      placeholder="view-source:video_link, select all codes, copy and paste here"
                                                       onChange={this.onChangeInput} ></textarea>
 
                                                 {this.state.loading
