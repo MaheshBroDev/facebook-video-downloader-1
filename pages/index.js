@@ -357,7 +357,7 @@ export default class Home extends React.Component {
                                     color:#0b0a0a;
                               }
                               .hide{
-                                    display:none;
+                                    display:none !important;
                               }
                               @media (max-width:480px){
                                     .check-button,
