@@ -13,11 +13,14 @@ export function Cleaner(raw_text) {
 export function checkResolutions(str) {
       return {
             '144p': (str + "").includes('FBQualityLabel="144p"'),
+            '180p': (str + "").includes('FBQualityLabel="180p"'),
             '240p': (str + "").includes('FBQualityLabel="240p"'),
+            '270p': (str + "").includes('FBQualityLabel="270p"'),
             '360p': (str + "").includes('FBQualityLabel="360p"'),
             '480p': (str + "").includes('FBQualityLabel="480p"'),
             '540p': (str + "").includes('FBQualityLabel="540p"'),
-            '720p': (str + "").includes('FBQualityLabel="720p"')
+            '720p': (str + "").includes('FBQualityLabel="720p"'),
+            '1080p':(str + "").includes('FBQualityLabel="1080p"'),
       }
 }
 

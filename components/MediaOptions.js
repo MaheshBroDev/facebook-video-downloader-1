@@ -15,11 +15,25 @@ export function MediaOptions({
                                                       <label>144p</label>
                                                 </div>
 
+                                                <div id="p180"
+                                                      className={resolutions['180p'] ? "" : "hide"}>
+                                                      <input type="radio" name="media"
+                                                            onClick={selectMedia} value="180p" />
+                                                      <label>180p</label>
+                                                </div>
+
                                                 <div id="p240"
                                                       className={resolutions['240p'] ? "" : "hide"}>
                                                       <input type="radio" name="media"
                                                             onClick={selectMedia} value="240p" />
                                                       <label>240p</label>
+                                                </div>
+
+                                                <div id="p270"
+                                                      className={resolutions['270p'] ? "" : "hide"}>
+                                                      <input type="radio" name="media"
+                                                            onClick={selectMedia} value="270p" />
+                                                      <label>270p</label>
                                                 </div>
 
                                                 <div id="p360"
@@ -50,6 +64,12 @@ export function MediaOptions({
                                                             onClick={selectMedia} value="720p" />
                                                       <label>720p</label>
                                                 </div>
+                                                <div id="p1080"
+                                                      className={resolutions['1080p'] ? "" : "hide"} >
+                                                      <input type="radio" name="media"
+                                                            onClick={selectMedia} value="1080p" />
+                                                      <label>1080p</label>
+                                                </div>
                                           </div>
                                     </>
                                     : <p className="error">Can't find any media!</p>}
@@ -78,9 +98,11 @@ export function MediaOptions({
                               text-align:center;
                               width:100%;
                         }
-                        #p144,#p240,#p360,#p480,#p540,#p720{
+                        #p144,#p240,#p360,
+                        #p480,#p540,#p720,
+                        #p180,#p270,#p1080{
                               display:flex;
-                              justify-content:center;
+                              padding-left:10px;
                         }
                   `}</style>
             </>
