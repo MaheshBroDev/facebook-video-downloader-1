@@ -1,6 +1,5 @@
 import React from "react";
 import {
-      checkMedia,
       checkResolutions,
       Cleaner,
       extractVideoLink,
@@ -23,10 +22,6 @@ export default class Home extends React.Component {
             chunkSize: 0,
             videoSrc: "",
             resourceStr: "",
-            media: {
-                  sd: false,
-                  hd: false,
-            },
             resolutions: {
                   '144p': false,
                   '240p': false,
@@ -87,11 +82,9 @@ export default class Home extends React.Component {
 
       checkHDhandler = () => {
             const resolutions = checkResolutions(this.state.resourceStr);
-            const media = checkMedia(resolutions);
             this.update({
                   resolutions,
                   isModalVisible: true,
-                  media
             })
       }
 
@@ -188,7 +181,7 @@ export default class Home extends React.Component {
                                                                   Clear</button>
                                                             : <button onClick={this.checkHDhandler}
                                                                   className="check-button">
-                                                                  Check SD/HD</button>}
+                                                                  Check Media</button>}
 
                                                 <div className="status">
                                                       <div>{this.state.loading && <Spinner />}</div>
@@ -221,14 +214,13 @@ export default class Home extends React.Component {
                         </div>
                         <Modal
                               visible={this.state.isModalVisible}>
-                              <h2>Select Resolution</h2>
+                              <h2 className="modal-title">Select Resolution</h2>
                               <MediaOptions
                                     resolutions={this.state.resolutions}
-                                    selectMedia={this.selectMedia}
-                                    media={this.state.media} />
+                                    selectMedia={this.selectMedia}/>
                               <div className="modal-footer">
                                     <button onClick={this.hideModal}
-                                          className="button">
+                                          className="cancel">
                                           Cancel
                                     </button>
                                     <button
@@ -301,10 +293,20 @@ export default class Home extends React.Component {
                                     padding:10px 25px;
                                     border-radius:5px;
                                     color:white;
-                                    background:#29C5F6;
+                                    background:#293241;
                                     text-align:center;
                                     border:none;
                                     cursor:pointer;
+                              }
+                              .cancel{
+                                    min-width:80px;
+                                    padding:10px 25px;
+                                    border-radius:5px;
+                                    color:#293241;
+                                    background:transparent;
+                                    text-align:center;
+                                    border:1px solid #293241;
+                                    cursor:pointer;    
                               }
                               .button:hover{
                                     filter:brightness(1.3);
@@ -344,6 +346,9 @@ export default class Home extends React.Component {
                                     padding:8px 4px;
                                     text-align:left;
                                     width:380px;
+                              }
+                              .modal-title{
+                                    text-align:center;
                               }
                         `}</style>
 

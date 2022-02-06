@@ -10,14 +10,6 @@ export function Cleaner(raw_text) {
       }
 };
 
-export function checkMedia(resolutions = {}) {
-      return {
-            sd: Object.keys(resolutions).some(el =>
-                  el !== '720p' && resolutions[el]),
-            hd: resolutions['720p']
-      }
-}
-
 export function checkResolutions(str) {
       return {
             '144p': (str + "").includes('FBQualityLabel="144p"'),
