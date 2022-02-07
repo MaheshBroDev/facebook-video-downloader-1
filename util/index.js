@@ -25,8 +25,8 @@ export function checkResolutions(str) {
 }
 
 function solveCors(link) {
-      const regex = /(?<=video)(.*?)(?=.xx)/s;
-      return link.replace(regex, "");
+      const regex = /(?<=video.)(.*?)(?=.fbcdn)/s;
+      return link.replace(regex, "xx");
 }
 
 function extractLink(str, regex) {
