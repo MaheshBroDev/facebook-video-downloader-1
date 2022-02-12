@@ -25,7 +25,7 @@ export function checkResolutions(str) {
 }
 
 function solveCors(link) {
-      //console.log('origin:',link)
+      console.log('origin:',link)
       const regex = /(?<=video)(.*?)(?=.fbcdn)/s;
       return link.replace(regex, ".xx");
 }
